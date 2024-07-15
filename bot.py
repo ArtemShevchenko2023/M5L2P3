@@ -43,6 +43,33 @@ def handle_show_visited_cities(message):
     manager.create_grapf('image/world.png', cities, color)
     with open('image/world.png', 'rb') as photo:
         bot.send_photo(message.chat.id, photo)
+@bot.message_handler(commands=['show_city_by_country'])
+def handle_show_city_by_country(message):
+    country_name = message.text.split()[1]
+    cities = manager.get_cities_by_country(country_name)
+    color = user_marker_colors.get(message.chat.id, 'blue')  # По умолчанию синий цвет
+    manager.create_grapf('image/world.png', cities, color)
+    with open('image/world.png', 'rb') as photo:
+        bot.send_photo(message.chat.id, photo)
+
+@bot.message_handler(commands=['show_city_by_density'])
+def handle_show_city_by_density(message):
+    min_density, max_density = map(int, message.text.split()[1:])
+    cities = manager.get_cities_by_density(min_density, max_density)
+    color = user_marker_colors.get(message.chat.id, 'blue')  # По умолчанию синий цвет
+    manager.create_grapf('image/world.png', cities, color)
+    with open('image/world.png', 'rb') as photo:
+        bot.send_photo(message.chat.id, photo)
+
+@bot.message_handler(commands=['show_city_by_density_and_country'])
+def handle_show_city_by_density_and_country(message):
+    country_name = message.text.split()[1]
+    min_density, max_density = map(int, message.text.split()[2:])
+    cities = manager.get_cities_by_density_and_country(country_name, min_density, max_density)
+    color = user_marker_colors.get(message.chat.id, 'blue')  # По умолчанию синий цвет
+    manager.create_grapf('image/world.png', cities, color)
+    with open('image/world.png', 'rb') as photo:
+        bot.send_photo(message.chat.id, photo)
 if __name__ == "__main__":
     manager = DB_Map(DATABASE)
     bot.polling()

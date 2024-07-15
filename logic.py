@@ -83,8 +83,29 @@ class DB_Map():
             lat, lon = self.get_coordinates(city)  # Функция для получения координат города
             ax.plot(lon, lat, marker='o', color=marker_color, markersize=5, transform=ccrs.Geodetic())
             plt.savefig(path)
-    def draw_distance(self, city1, city2):
-        pass
+    def get_cities_by_country(self, country_name):
+        conn = sqlite3.connect(self.database)
+        with conn:
+            cursor = conn.cursor()
+            query = "SELECT city FROM cities WHERE country = ?"
+            cursor.execute(query, (country_name,))
+            return [row[0] for row in cursor.fetchall()]
+
+    def get_cities_by_density(self, min_density, max_density):
+        conn = sqlite3.connect(self.database)
+        with conn:
+            cursor = conn.cursor()
+            query = "SELECT city FROM cities WHERE population_density BETWEEN ? AND ?"
+            cursor.execute(query, (min_density, max_density))
+            return [row[0] for row in cursor.fetchall()]
+
+    def get_cities_by_density_and_country(self, country_name, min_density, max_density):
+        conn = sqlite3.connect(self.database)
+        with conn:
+            cursor = conn.cursor()
+            query = "SELECT city FROM cities WHERE country = ? AND population_density BETWEEN ? AND ?"
+            cursor.execute(query, (country_name, min_density, max_density))
+            return [row[0] for row in cursor.fetchall()]
 
 
 if __name__=="__main__":
